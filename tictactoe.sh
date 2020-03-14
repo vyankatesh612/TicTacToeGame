@@ -1,6 +1,6 @@
 #!/bin/bash -x
 echo "WELCOME TO TIC_TAC_TOE GAME"
-declare -a gameBoard
+ declare -a gameBoard
 boardsize=9
 moves=0
 letter1="X"
@@ -19,13 +19,16 @@ function checktoss()
 	{
 		local toss=$((RANDOM%2))
 		if [ $toss == 0 ]
-		then 
-			player=$letter1
+		then
+			opponentletter=$letter1
+			computerletter=$letter2
+			opponentposition
 		else
-			player=$letter2
+			computerletter=$letter1
+			opponentletter=$letter2
+			computerposition
 		fi
 	}
-checktoss
 
 function displayboard()
 	{
@@ -37,25 +40,46 @@ function displayboard()
 	}
 displayboard
 
-function chooseposition()
+function opponentposition()
 	{
+		local win="opponent"
 		while [ true ]
 		do
 			read -p "choose any position on board : " position
 			if [[ ${gameBoard[$position-1]} == "_" ]] 
 			then
-				gameBoard[$position-1]=$player
+				gameBoard[$position-1]=$opponentletter
 			else
 				echo " position is already occupied ..choose another"
 				chooseposition 
 			fi
 			moves=$(($moves + 1))
 			displayboard
-			checkwinner $player
+			checkwinner $opponentletter
 			checktie $moves
-			changeturn $player
+			computerposition
 		done
 	}
+
+function computerposition()
+	{
+		local win="computer"
+		while [ true ]
+		do
+			position=$((RANDOM%9 + 1))
+			if [[ ${gameBoard[$position-1]} == "_" ]] 
+			then
+				gameBoard[$position-1]=$computerletter
+			else
+				computerposition 
+			fi
+			moves=$(($moves + 1))
+			displayboard
+			checkwinner $computerletter
+			checktie $moves
+			opponentposition
+      done
+   }
 
 function checkwinner()
 	{
@@ -75,7 +99,7 @@ function checkrowWin()
 			rowcombination=${gameBoard[$row]}${gameBoard[$row+1]}${gameBoard[$row+2]}
 			if [ $rowcombination == $combination ]
 			then
-				displaywin $player
+				displaywin $win
 			fi
 		done
 	}
@@ -88,7 +112,7 @@ function checkcolumnWin()
 			columncombination=${gameBoard[$column]}${gameBoard[$colum+3]}${gameBoard[$row+6]}
 			if [ $columncombination == $combination ]
 			then
-				displaywin $player
+				displaywin $win
 			fi
 		done
 	}
@@ -100,19 +124,9 @@ function checkdigonalWin()
 		digonalcombination2=${gameBoard[2]}${gameBoard[4]}${gameBoard[6]}
 		if [[ $digonalcombination1 == $combination || $digonalcombination2 == $combination ]]
 		then
-			displaywin $player
+			displaywin $win
 		fi
 
-	}
-
-function changeturn()
-	{
-		if [ $player == $letter1 ]
-		then
-			player=$letter2
-		else
-			player=$letter1
-		fi
 	}
 
 function checktie()
@@ -120,6 +134,7 @@ function checktie()
 		local moves=$1
 		if [ $moves -gt 8 ]
 		then
+			echo "Tie"
 			exit
 		fi
 	}
@@ -130,4 +145,4 @@ function displaywin()
 		echo "$player win"
 		exit 
 	}
-chooseposition
+checktoss
