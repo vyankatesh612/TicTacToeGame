@@ -45,6 +45,9 @@ function chooseposition()
 			if [[ ${gameBoard[$position-1]} == "_" ]] 
 			then
 				gameBoard[$position-1]=$player
+			else
+				echo " position is already occupied ..choose another"
+				chooseposition 
 			fi
 			moves=$(($moves + 1))
 			displayboard
