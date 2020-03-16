@@ -66,12 +66,27 @@ function computerposition()
 		local win="computer"
 		while [ true ]
 		do
-			position=$((RANDOM%9 + 1))
-			if [[ ${gameBoard[$position-1]} == "_" ]] 
+			if [[ $(computermoveforrowwin $computerletter) == 1 ]]
 			then
-				gameBoard[$position-1]=$computerletter
+				displayboard
+				displaywin $player
+			elif [[ $(computermoveforcolumnwin $computerletter) == 1 ]]
+			then
+				displayboard
+				displaywin $player
+			elif [[ $(computermovefordigonalwin $computerletter) == 1 ]]
+			then
+				displayboard
+				displaywin $player
 			else
-				computerposition 
+				position=$((RANDOM%9 + 1))
+			
+				if [[ ${gameBoard[$position-1]} == "_" ]] 
+				then
+					gameBoard[$position-1]=$computerletter
+				else
+					computerposition 
+				fi
 			fi
 			moves=$(($moves + 1))
 			displayboard
@@ -127,6 +142,84 @@ function checkdigonalWin()
 			displaywin $win
 		fi
 
+	}
+
+function computermoveforrowwin()
+	{
+		local flag=0
+		local input=$1
+		for ((i=0;i<9;i=$i+3))
+		do
+			if [[ ${gameBoard[$i]} == $input && ${gameBoard[$i+1]} == $input && ${gameBoard[$i+2]} == "_" ]]
+			then
+				flag=1
+				gameBoard[$((i+2))]=$computerletter
+			elif [[ ${gameBoard[$i]} == $input && ${gameBoard[$i+1]} == "_" && ${gameBoard[$i+2]} == $input ]]
+			then
+				flag=1
+				gameBoard[$((i+1))]=$computerletter
+			elif [[ ${gameBoard[$i]} == "_" && ${gameBoard[$i+1]} == $input && ${gameBoard[$i+2]} == $input ]]
+			then
+				flag=1
+				gameBoard[$i]=$computerletter
+			fi
+		done
+		echo $flag
+	}
+
+function computermoveforcolumnwin()
+	{
+		local flag=0
+		local input=$1
+		for ((i=0;i<3;i++))
+		do
+			if [[ ${gameBoard[$i]} == $input && ${gameBoard[$i+3]} == $input && ${gameBoard[$i+6]} == "_" ]]
+			then
+				flag=1
+				gameBoard[$((i+6))]=$computerletter
+			elif [[ ${gameBoard[$i]} == $input && ${gameBoard[$i+3]} == "_" && ${gameBoard[$i+6]} == $input ]]
+			then
+				flag=1
+				gameBoard[$((i+3))]=$computerletter
+			elif [[ ${gameBoard[$i]} == "_" && ${gameBoard[$i+1]} == $input && ${gameBoard[$i+2]} == $input ]]
+			then
+				flag=1
+				gameBoard[$i]=$computerletter
+			fi
+		done
+		echo $flag
+	}
+
+function computermovefordigonalwin()
+	{
+		local flag=0
+		local input=$1
+		if [[ ${gameBoard[0]} == $input && ${gameBoard[4]} == $input && ${gameBoard[8]} == "_" ]]
+		then
+			flag=1
+			gameBoard[8]=$computerletter
+		elif [[ ${gameBoard[0]} == $input && ${gameBoard[4]} == "_" && ${gameBoard[8]} == $input ]]
+		then
+			flag=1
+			gameBoard[4]=$computerletter
+		elif [[ ${gameBoard[0]} == "_" && ${gameBoard[4]} == $input && ${gameBoard[8]} == $input ]]
+		then
+			flag=1
+			gameBoard[0]=$computerletter
+		elif [[ ${gameBoard[2]} == $input && ${gameBoard[4]} == $input && ${gameBoard[6]} == "_" ]]
+		then
+			flag=1
+			gameBoard[6]=$computerletter
+		elif [[ ${gameBoard[2]} == $input && ${gameBoard[4]} == "_" && ${gameBoard[6]} == $input ]]
+		then
+			flag=1
+			gameBoard[4]=$computerletter
+		elif [[ ${gameBoard[2]} == "_" && ${gameBoard[4]} == $input && ${gameBoard[6]} == $input ]]
+		then
+			flag=1
+			gameBoard[2]=$computerletter
+		fi
+		echo $flag
 	}
 
 function checktie()
