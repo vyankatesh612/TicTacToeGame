@@ -51,7 +51,7 @@ function opponentposition()
 				gameBoard[$position-1]=$opponentletter
 			else
 				echo " position is already occupied ..choose another"
-				chooseposition 
+				opponentposition 
 			fi
 			moves=$(($moves + 1))
 			displayboard
