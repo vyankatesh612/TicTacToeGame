@@ -77,7 +77,7 @@ function computerposition()
 				displaywin $player
 			else
 				blockopponent
-				takecorner
+				takecornerwithcenter
 			fi
 			moves=$(($moves + 1))
 			checkwinner $computerletter
@@ -238,7 +238,7 @@ function blockopponent()
 		fi
 	}
 
-function takecorner()
+function takecornerwithcenter()
 	{
 		for ((i=0;i<9;i+=2))
 		do
