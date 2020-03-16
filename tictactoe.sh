@@ -66,31 +66,20 @@ function computerposition()
 		local player="computer"
 		while [ true ]
 		do
-			blockopponent
 			if [[ $(computermoveforrowwin $computerletter) == 1 ]]
 			then
-				displayboard
 				displaywin $player
 			elif [[ $(computermoveforcolumnwin $computerletter) == 1 ]]
 			then
-				displayboard
 				displaywin $player
 			elif [[ $(computermovefordigonalwin $computerletter) == 1 ]]
 			then
-				displayboard
 				displaywin $player
 			else
-				position=$((RANDOM%9 + 1))
-			
-				if [[ ${gameBoard[$position-1]} == "_" ]] 
-				then
-					gameBoard[$position-1]=$computerletter
-				else
-					computerposition 
-				fi
+				blockopponent
+				takecorner
 			fi
 			moves=$(($moves + 1))
-			displayboard
 			checkwinner $computerletter
 			checktie $moves
 			opponentposition
@@ -247,6 +236,19 @@ function blockopponent()
 		then
 			opponentposition
 		fi
+	}
+
+function takecorner()
+	{
+		for ((i=0;i<9;i+=2))
+		do
+			if [[ ${gameBoard[$i]} == "_" ]]
+			then
+				gameBoard[$i]=$computerletter
+				displayboard
+				opponentposition
+			fi
+		done
 	}
 
 function checktie()
