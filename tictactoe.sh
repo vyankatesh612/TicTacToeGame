@@ -42,7 +42,7 @@ displayboard
 
 function opponentposition()
 	{
-		local win="opponent"
+		local player="opponent"
 		while [ true ]
 		do
 			read -p "choose any position on board : " position
@@ -63,9 +63,10 @@ function opponentposition()
 
 function computerposition()
 	{
-		local win="computer"
+		local player="computer"
 		while [ true ]
 		do
+			blockopponent
 			if [[ $(computermoveforrowwin $computerletter) == 1 ]]
 			then
 				displayboard
@@ -114,7 +115,7 @@ function checkrowWin()
 			rowcombination=${gameBoard[$row]}${gameBoard[$row+1]}${gameBoard[$row+2]}
 			if [ $rowcombination == $combination ]
 			then
-				displaywin $win
+				displaywin $player
 			fi
 		done
 	}
@@ -127,7 +128,7 @@ function checkcolumnWin()
 			columncombination=${gameBoard[$column]}${gameBoard[$colum+3]}${gameBoard[$row+6]}
 			if [ $columncombination == $combination ]
 			then
-				displaywin $win
+				displaywin $player
 			fi
 		done
 	}
@@ -139,7 +140,7 @@ function checkdigonalWin()
 		digonalcombination2=${gameBoard[2]}${gameBoard[4]}${gameBoard[6]}
 		if [[ $digonalcombination1 == $combination || $digonalcombination2 == $combination ]]
 		then
-			displaywin $win
+			displaywin $player
 		fi
 
 	}
@@ -154,14 +155,17 @@ function computermoveforrowwin()
 			then
 				flag=1
 				gameBoard[$((i+2))]=$computerletter
+				displayboard
 			elif [[ ${gameBoard[$i]} == $input && ${gameBoard[$i+1]} == "_" && ${gameBoard[$i+2]} == $input ]]
 			then
 				flag=1
 				gameBoard[$((i+1))]=$computerletter
+				displayboard
 			elif [[ ${gameBoard[$i]} == "_" && ${gameBoard[$i+1]} == $input && ${gameBoard[$i+2]} == $input ]]
 			then
 				flag=1
 				gameBoard[$i]=$computerletter
+				displayboard
 			fi
 		done
 		echo $flag
@@ -177,14 +181,17 @@ function computermoveforcolumnwin()
 			then
 				flag=1
 				gameBoard[$((i+6))]=$computerletter
+				displayboard
 			elif [[ ${gameBoard[$i]} == $input && ${gameBoard[$i+3]} == "_" && ${gameBoard[$i+6]} == $input ]]
 			then
 				flag=1
 				gameBoard[$((i+3))]=$computerletter
+				displayboard
 			elif [[ ${gameBoard[$i]} == "_" && ${gameBoard[$i+1]} == $input && ${gameBoard[$i+2]} == $input ]]
 			then
 				flag=1
 				gameBoard[$i]=$computerletter
+				displayboard
 			fi
 		done
 		echo $flag
@@ -198,28 +205,48 @@ function computermovefordigonalwin()
 		then
 			flag=1
 			gameBoard[8]=$computerletter
+			displayboard
 		elif [[ ${gameBoard[0]} == $input && ${gameBoard[4]} == "_" && ${gameBoard[8]} == $input ]]
 		then
 			flag=1
 			gameBoard[4]=$computerletter
+			displayboard
 		elif [[ ${gameBoard[0]} == "_" && ${gameBoard[4]} == $input && ${gameBoard[8]} == $input ]]
 		then
 			flag=1
 			gameBoard[0]=$computerletter
+			displayboard
 		elif [[ ${gameBoard[2]} == $input && ${gameBoard[4]} == $input && ${gameBoard[6]} == "_" ]]
 		then
 			flag=1
 			gameBoard[6]=$computerletter
+			displayboard
 		elif [[ ${gameBoard[2]} == $input && ${gameBoard[4]} == "_" && ${gameBoard[6]} == $input ]]
 		then
 			flag=1
 			gameBoard[4]=$computerletter
+			displayboard
 		elif [[ ${gameBoard[2]} == "_" && ${gameBoard[4]} == $input && ${gameBoard[6]} == $input ]]
 		then
 			flag=1
 			gameBoard[2]=$computerletter
+			displayboard
 		fi
 		echo $flag
+	}
+
+function blockopponent()
+	{
+		if [[ $(computermoveforrowwin $opponentletter) == 1 ]]
+		then
+			opponentposition
+		elif [[ $(computermoveforcolumnwin $opponentletter) == 1 ]]
+		then
+			opponentposition
+		elif [[ $(computermovefordigonalwin $opponentletter) == 1 ]]
+		then
+			opponentposition
+		fi
 	}
 
 function checktie()
