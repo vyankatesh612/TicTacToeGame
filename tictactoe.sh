@@ -242,10 +242,6 @@ function takecorner()
 	{
 		for ((i=0;i<9;i+=2))
 		do
-			if [[ $i == 4 ]]
-			then 
-				i=$i+2
-			fi
 			if [[ ${gameBoard[$i]} == "_" ]]
 			then
 				gameBoard[$i]=$computerletter
